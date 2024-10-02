@@ -38,14 +38,14 @@
   <button id="upload-button">Upload Photo</button>
 
   <script>
-    // Your Firebase configuration (replace with your actual Firebase config)
+    // Your Firebase configuration
     const firebaseConfig = {
-       apiKey: "AIzaSyBwLQI8u5RnxVZ2JJZwLHMQemFmnL6fLPU",
-  authDomain: "durgamaapplication.firebaseapp.com",
-  projectId: "durgamaapplication",
-  storageBucket: "durgamaapplication.appspot.com",
-  messagingSenderId: "324374526686",
-  appId: "1:324374526686:web:ece480a9d4aa305dbd204f"
+      apiKey: "AIzaSyBwLQI8u5RnxVZ2JJZwLHMQemFmnL6fLPU",
+      authDomain: "durgamaapplication.firebaseapp.com",
+      projectId: "durgamaapplication",
+      storageBucket: "durgamaapplication.appspot.com",
+      messagingSenderId: "324374526686",
+      appId: "1:324374526686:web:ece480a9d4aa305dbd204f"
     };
 
     // Initialize Firebase
@@ -61,8 +61,10 @@
       const file = fileInput.files[0];
 
       if (file) {
-        // Upload the file to Firebase Storage
+        // Create a reference to the file in Firebase Storage
         const storageRef = storage.ref('images/' + file.name);
+
+        // Upload the file to Firebase Storage
         storageRef.put(file).then(function(snapshot) {
           console.log('Uploaded a blob or file!', snapshot);
 
@@ -70,7 +72,13 @@
           storageRef.getDownloadURL().then(function(url) {
             console.log('File available at', url);
             displayImage(url, file.name);  // Display image in the gallery
+          }).catch(function(error) {
+            console.error('Error getting download URL', error);  // Error handling
+            alert('Failed to get image URL: ' + error.message);
           });
+        }).catch(function(error) {
+          console.error('Error uploading file', error);  // Error handling
+          alert('Failed to upload image: ' + error.message);
         });
       } else {
         alert('Please choose a file first.');
