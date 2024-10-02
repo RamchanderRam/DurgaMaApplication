@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Gallery</title>
+    <title>Persistent Image Gallery</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -38,41 +38,56 @@
 </head>
 <body>
     <div class="container">
-        <h1>Image Gallery</h1>
-        <!-- Display uploaded image -->
-        <div>
-            <img id="mainImage" src="your_uploaded_image.png" alt="Uploaded Image">
-        </div>
-
-        <!-- Upload new images -->
+        <h1>Persistent Image Gallery</h1>
         <div>
             <input type="file" id="imageUpload" accept="image/*" multiple>
         </div>
-
-        <!-- Display new images in the gallery -->
         <div class="gallery" id="gallery"></div>
     </div>
 
     <script>
-        // JavaScript to handle image uploads
         const imageUpload = document.getElementById('imageUpload');
         const gallery = document.getElementById('gallery');
 
+        // Function to load images from localStorage
+        function loadImages() {
+            const storedImages = JSON.parse(localStorage.getItem('imageGallery')) || [];
+            storedImages.forEach(src => {
+                const imgElement = document.createElement('img');
+                imgElement.src = src;
+                gallery.appendChild(imgElement);
+            });
+        }
+
+        // Function to store images in localStorage
+        function storeImage(imageSrc) {
+            let storedImages = JSON.parse(localStorage.getItem('imageGallery')) || [];
+            storedImages.push(imageSrc);
+            localStorage.setItem('imageGallery', JSON.stringify(storedImages));
+        }
+
+        // Handle image uploads
         imageUpload.addEventListener('change', function(event) {
             const files = event.target.files;
 
             for (const file of files) {
                 const reader = new FileReader();
-                
+
                 reader.onload = function(e) {
                     const imgElement = document.createElement('img');
                     imgElement.src = e.target.result;
                     gallery.appendChild(imgElement);
+
+                    // Store image in localStorage
+                    storeImage(e.target.result);
                 }
-                
+
                 reader.readAsDataURL(file);
             }
         });
+
+        // Load images on page load
+        document.addEventListener('DOMContentLoaded', loadImages);
     </script>
 </body>
 </html>
