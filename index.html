@@ -1,104 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Durga Ma Festival Gallery</title>
-  <style>
-    .gallery {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .gallery img {
-      width: 200px;
-      height: auto;
-    }
-    #upload-button {
-      padding: 10px;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-  </style>
-  <!-- Firebase App (the core Firebase SDK) -->
-  <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-storage.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .container {
+            margin: 20px auto;
+            max-width: 800px;
+        }
+        #mainImage {
+            width: 300px;
+            height: auto;
+        }
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .gallery img {
+            width: 150px;
+            height: auto;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+        }
+        input[type="file"] {
+            margin-top: 15px;
+        }
+    </style>
 </head>
 <body>
-  <h1>Durga Ma Festival Gallery</h1>
-  <div id="gallery" class="gallery">
-    <!-- Images will be loaded here -->
-  </div>
+    <div class="container">
+        <h1>Image Gallery</h1>
+        <!-- Display uploaded image -->
+        <div>
+            <img id="mainImage" src="your_uploaded_image.png" alt="Uploaded Image">
+        </div>
 
-  <h2>Upload a Photo</h2>
-  <input type="file" id="fileInput" />
-  <button id="upload-button">Upload Photo</button>
+        <!-- Upload new images -->
+        <div>
+            <input type="file" id="imageUpload" accept="image/*" multiple>
+        </div>
 
-  <script>
-    // Your Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyBwLQI8u5RnxVZ2JJZwLHMQemFmnL6fLPU",
-      authDomain: "durgamaapplication.firebaseapp.com",
-      projectId: "durgamaapplication",
-      storageBucket: "durgamaapplication.appspot.com",
-      messagingSenderId: "324374526686",
-      appId: "1:324374526686:web:ece480a9d4aa305dbd204f"
-    };
+        <!-- Display new images in the gallery -->
+        <div class="gallery" id="gallery"></div>
+    </div>
 
-    // Initialize Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const storage = firebase.storage(app); // Pass the app instance
+    <script>
+        // JavaScript to handle image uploads
+        const imageUpload = document.getElementById('imageUpload');
+        const gallery = document.getElementById('gallery');
 
-    // Reference to the gallery div
-    const gallery = document.getElementById('gallery');
+        imageUpload.addEventListener('change', function(event) {
+            const files = event.target.files;
 
-    // Upload button handler
-    document.getElementById('upload-button').addEventListener('click', function() {
-      const fileInput = document.getElementById('fileInput');
-      const file = fileInput.files[0];
-
-      if (file) {
-        // Create a reference to the file in Firebase Storage
-        const storageRef = storage.ref('images/' + file.name);
-
-        // Upload the file to Firebase Storage
-        storageRef.put(file).then(function(snapshot) {
-          console.log('Uploaded a blob or file!', snapshot);
-
-          // Get the URL of the uploaded image
-          storageRef.getDownloadURL().then(function(url) {
-            console.log('File available at', url);
-            displayImage(url, file.name);  // Display image in the gallery
-          }).catch(function(error) {
-            console.error('Error getting download URL', error);
-            alert('Failed to get image URL: ' + error.message);
-          });
-        }).catch(function(error) {
-          console.error('Error uploading file', error);
-          alert('Failed to upload image: ' + error.message);
+            for (const file of files) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = e.target.result;
+                    gallery.appendChild(imgElement);
+                }
+                
+                reader.readAsDataURL(file);
+            }
         });
-      } else {
-        alert('Please choose a file first.');
-      }
-    });
-
-    // Function to display the uploaded image in the gallery
-    function displayImage(url, fileName) {
-      const imgElement = document.createElement('img');
-      imgElement.src = url;
-      imgElement.alt = fileName;
-
-      const caption = document.createElement('p');
-      caption.textContent = fileName;
-
-      const container = document.createElement('div');
-      container.appendChild(imgElement);
-      container.appendChild(caption);
-
-      gallery.appendChild(container);
-    }
-  </script>
+    </script>
 </body>
 </html>
