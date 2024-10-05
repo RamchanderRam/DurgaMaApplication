@@ -89,16 +89,7 @@
     <div class="photo-gallery-section">
         <h2>Festival Photo Gallery</h2>
         <div class="gallery">
-            @if (Model != null && Model.Count > 0)
-            {
-                @foreach (var image in Model)
-                {
-                    <div class="gallery-item">
-                        <img src="~/uploads/@image" class="img-thumbnail" alt="Uploaded Image" />
-                    </div>
-                }
-            }
-            else
+            
             {
                 <p>No photos uploaded yet. Be the first to share your Navarathri moments!</p>
             }
